@@ -1,0 +1,6 @@
+/target
+# Real factory pattern files are company data: never commit them to this (public) repo.
+/testdata/private/*
+!/testdata/private/README.md
+*.svg
+*.plt

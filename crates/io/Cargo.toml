@@ -1,0 +1,9 @@
+[package]
+name = "gcad-io"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+gcad-geom.workspace = true
+gcad-model.workspace = true

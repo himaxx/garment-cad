@@ -1,0 +1,8 @@
+[package]
+name = "gcad-model"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+gcad-geom.workspace = true
