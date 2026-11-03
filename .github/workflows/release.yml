@@ -1,11 +1,17 @@
 name: Release (Windows)
 
 # Builds gcad.exe and publishes it as a GitHub Release.
-# Trigger: push a tag like v0.1.0, or run manually from the Actions tab.
+# Trigger: push a tag like v0.1.0, or run manually from the Actions tab
+# ("Run workflow", enter a version such as v0.1.1; the tag is created for you).
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version tag to create, e.g. v0.1.1 (leave empty for a test build without a release)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -22,8 +28,12 @@ jobs:
         run: cargo build --release -p gcad-cli
       - name: Package
         shell: pwsh
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          $ver = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME } else { "dev-$($env:GITHUB_SHA.Substring(0,7))" }
+          $ver = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME }
+                 elseif ($env:INPUT_VERSION) { $env:INPUT_VERSION }
+                 else { "dev-$($env:GITHUB_SHA.Substring(0,7))" }
           $dir = "gcad-$ver-windows-x64"
           New-Item -ItemType Directory $dir | Out-Null
           Copy-Item target/release/gcad.exe $dir/
@@ -36,8 +46,10 @@ jobs:
           name: gcad-windows-x64
           path: ${{ env.ZIP }}
       - name: Publish release
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' || inputs.version != ''
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
+          target_commitish: ${{ github.sha }}
           files: ${{ env.ZIP }}
           generate_release_notes: true
