@@ -1,0 +1,23 @@
+Garment CAD - gcad (early test version)
+=======================================
+
+EASY WAY (no typing)
+  - Drag a Richpeace .dgs file onto  show-info.bat  -> shows sizes, pieces, quantities, fabric area
+  - Drag a Richpeace .dgs file onto  make-plot.bat  -> creates next to the .dgs file:
+        <name>_all_sizes.svg   preview of all sizes (open with Chrome or Edge)
+        <name>_base.plt        plotter file of the base size (open in Richpeace PlotCenter)
+
+COMMAND WAY (PowerShell, in this folder)
+  .\gcad.exe info "E:\path\GT_102.dgs"
+  .\gcad.exe svg  "E:\path\GT_102.dgs" -o preview.svg --size all
+  .\gcad.exe plt  "E:\path\GT_102.dgs" -o size28.plt --size 28 --paper-width 1600
+  .\gcad.exe plt  --help        (all options, e.g. --scale-x for plotter calibration)
+
+PLOTTER CALIBRATION
+  Plot a file, measure a long straight edge, then add  --scale-x <expected / measured>
+  Example: line should be 457.2 mm but measures 456.0 mm -> --scale-x 1.0026
+
+NOTES
+  - Windows may show "Windows protected your PC" the first time (the file is not signed yet):
+    click "More info" -> "Run anyway".
+  - Only Richpeace .dgs pattern files are supported in this version.

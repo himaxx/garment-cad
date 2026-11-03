@@ -1,0 +1,43 @@
+name: Release (Windows)
+
+# Builds gcad.exe and publishes it as a GitHub Release.
+# Trigger: push a tag like v0.1.0, or run manually from the Actions tab.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test
+        run: cargo test
+      - name: Build
+        run: cargo build --release -p gcad-cli
+      - name: Package
+        shell: pwsh
+        run: |
+          $ver = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME } else { "dev-$($env:GITHUB_SHA.Substring(0,7))" }
+          $dir = "gcad-$ver-windows-x64"
+          New-Item -ItemType Directory $dir | Out-Null
+          Copy-Item target/release/gcad.exe $dir/
+          Copy-Item packaging/windows/* $dir/
+          Compress-Archive -Path $dir -DestinationPath "$dir.zip"
+          "ZIP=$dir.zip" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcad-windows-x64
+          path: ${{ env.ZIP }}
+      - name: Publish release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP }}
+          generate_release_notes: true

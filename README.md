@@ -19,7 +19,13 @@ It is meant to replace Richpeace DGS, GMS and PlotCenter.
 - [ ] Nesting spike (jagua-rs / sparrow)
 - [ ] Tauri desktop app shell
 
-## Build & use
+## Download (Windows, no installation)
+Get the latest `gcad-…-windows-x64.zip` from the [Releases page](https://github.com/himaxx/garment-cad/releases) and unzip it.
+Drag a `.dgs` file onto `show-info.bat` or `make-plot.bat`. See `HOW-TO-USE.txt` inside the zip.
+
+New releases are built automatically when a version tag (for example `v0.1.1`) is pushed.
+
+## Build from source & use
 Requires Rust (stable).
 
 ```bash
